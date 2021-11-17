@@ -1,12 +1,70 @@
+import { useState } from "react";
+import { useRouter } from "next/router";
 import Layout from "../components/Layout";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
+import { useMutation, gql } from "@apollo/client";
+
+const AUTH_USER = gql`
+  mutation AuthUser($input: AuthInput!) {
+    authUser(input: $input) {
+      token
+    }
+  }
+`;
 
 const Login = () => {
+  const [authUser] = useMutation(AUTH_USER);
+  const [message, setMessage] = useState(null);
+  const router = useRouter();
+
+  const formik = useFormik({
+    initialValues: {
+      password: "",
+      email: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string().email("Main invalid").required("Email is required"),
+      password: Yup.string()
+        .required("Password is required")
+        .min(6, "Minimun password length 6 characters"),
+    }),
+    onSubmit: async (values) => {
+      try {
+        const { data } = await authUser({
+          variables: { input: { ...values } },
+        });
+        setMessage(`Autenticando...`);
+        localStorage.setItem("token", data.authUser.token);
+        setTimeout(() => {
+          setMessage(null);
+          router.push("/");
+        }, 3000);
+      } catch (error) {
+        console.log(error);
+        setMessage(error.message);
+        setTimeout(() => {
+          setMessage(null);
+        }, 3000);
+      }
+    },
+  });
+
   return (
     <Layout>
       <h1 className="text-white font-light text-2xl text-center">Login</h1>
+      {message ? (
+        <div className="bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto">
+          <p>{message}</p>
+        </div>
+      ) : null}
       <div className="flex justify-center mt-5">
         <div className="w-full max-w-sm">
-          <form className="bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4">
+          <form
+            onSubmit={formik.handleSubmit}
+            className="bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4"
+          >
             <div className="mb-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
@@ -18,8 +76,17 @@ const Login = () => {
                 type="email"
                 id="email"
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-none"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
             </div>
+            {formik.touched.email && formik.errors.email ? (
+              <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
+                <p className="font-bold">Error: </p>
+                <p>{formik.errors.email}</p>
+              </div>
+            ) : null}
             <div className="mb-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
@@ -31,8 +98,17 @@ const Login = () => {
                 type="password"
                 id="password"
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-none"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               />
             </div>
+            {formik.touched.password && formik.errors.password ? (
+              <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
+                <p className="font-bold">Error: </p>
+                <p>{formik.errors.password}</p>
+              </div>
+            ) : null}
             <input
               type="submit"
               className="bg-gray-800 w-full mt-5 p-2 text-white uppercase hover:bg-gray-900"
