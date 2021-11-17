@@ -1,13 +1,13 @@
 import Layout from "../components/Layout";
 
-const Home = () => {
+const Orders = () => {
   return (
     <div>
       <Layout>
-        <h1 className="text-2xl text-gray-800 font-light">Clients</h1>
+        <h1 className="text-2xl text-gray-800 font-light">Orders</h1>
       </Layout>
     </div>
   );
 };
 
-export default Home;
+export default Orders;
