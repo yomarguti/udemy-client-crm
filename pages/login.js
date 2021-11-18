@@ -53,9 +53,9 @@ const Login = () => {
 
   return (
     <Layout>
-      <h1 className="text-white font-light text-2xl text-center">Login</h1>
+      <h1 className="text-2xl font-light text-center text-white">Login</h1>
       {message ? (
-        <div className="bg-white py-2 px-3 w-full my-3 max-w-sm text-center mx-auto">
+        <div className="w-full max-w-sm px-3 py-2 mx-auto my-3 text-center bg-white">
           <p>{message}</p>
         </div>
       ) : null}
@@ -63,11 +63,11 @@ const Login = () => {
         <div className="w-full max-w-sm">
           <form
             onSubmit={formik.handleSubmit}
-            className="bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4"
+            className="px-8 pt-6 pb-8 mb-4 bg-white rounded shadow-md"
           >
             <div className="mb-4">
               <label
-                className="block text-gray-700 text-sm font-bold mb-2"
+                className="block mb-2 text-sm font-bold text-gray-700"
                 htmlFor="email"
               >
                 Email
@@ -75,21 +75,21 @@ const Login = () => {
               <input
                 type="email"
                 id="email"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-none"
+                className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-none"
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
             </div>
             {formik.touched.email && formik.errors.email ? (
-              <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
+              <div className="p-4 my-2 text-red-700 bg-red-100 border-l-4 border-red-500">
                 <p className="font-bold">Error: </p>
                 <p>{formik.errors.email}</p>
               </div>
             ) : null}
             <div className="mb-4">
               <label
-                className="block text-gray-700 text-sm font-bold mb-2"
+                className="block mb-2 text-sm font-bold text-gray-700"
                 htmlFor="password"
               >
                 Password
@@ -97,21 +97,21 @@ const Login = () => {
               <input
                 type="password"
                 id="password"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-none"
+                className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-none"
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
             </div>
             {formik.touched.password && formik.errors.password ? (
-              <div className="my-2 bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
+              <div className="p-4 my-2 text-red-700 bg-red-100 border-l-4 border-red-500">
                 <p className="font-bold">Error: </p>
                 <p>{formik.errors.password}</p>
               </div>
             ) : null}
             <input
               type="submit"
-              className="bg-gray-800 w-full mt-5 p-2 text-white uppercase hover:bg-gray-900"
+              className="w-full p-2 mt-5 text-white uppercase bg-gray-800 hover:bg-gray-900"
               value="Iniciar Sesion"
             />
           </form>
