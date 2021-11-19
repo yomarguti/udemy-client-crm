@@ -14,7 +14,6 @@ const GET_CLIENTS_BY_SELLER = gql`
       email
       company
       phone
-      createdAt
       sellerId
     }
   }

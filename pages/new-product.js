@@ -5,30 +5,26 @@ import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const NEW_CLIENT = gql`
-  mutation NewClient($input: ClientInput) {
-    newClient(input: $input) {
+const NEW_PRODUCT = gql`
+  mutation Mutation($input: ProductInput) {
+    newProduct(input: $input) {
       id
       name
-      lastname
-      email
-      company
-      phone
-      sellerId
+      stock
+      price
+      createdAt
     }
   }
 `;
 
-const GET_CLIENTS_BY_SELLER = gql`
-  query GetClientsBySeller {
-    getClientsBySeller {
+const GET_PRODUCTS = gql`
+  query Query {
+    getProducts {
       id
       name
-      lastname
-      email
-      company
-      phone
-      sellerId
+      stock
+      price
+      createdAt
     }
   }
 `;
@@ -36,16 +32,16 @@ const GET_CLIENTS_BY_SELLER = gql`
 const newClient = () => {
   const [message, setMessage] = useState(null);
   const router = useRouter();
-  const [newClient] = useMutation(NEW_CLIENT, {
-    update(cache, { data: { newClient } }) {
-      const { getClientsBySeller } = cache.readQuery({
-        query: GET_CLIENTS_BY_SELLER,
+  const [newProduct] = useMutation(NEW_PRODUCT, {
+    update(cache, { data: { newProduct } }) {
+      const { getProducts } = cache.readQuery({
+        query: GET_PRODUCTS,
       });
 
       cache.writeQuery({
-        query: GET_CLIENTS_BY_SELLER,
+        query: GET_PRODUCTS,
         data: {
-          getClientsBySeller: [...getClientsBySeller, newClient],
+          getProducts: [...getProducts, newProduct],
         },
       });
     },
@@ -54,32 +50,33 @@ const newClient = () => {
   const formik = useFormik({
     initialValues: {
       name: "",
-      lastname: "",
-      email: "",
-      company: "",
-      phone: "",
+      stock: "",
+      price: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Name is required"),
-      lastname: Yup.string().required("Lastname is required"),
-      email: Yup.string().email("Main invalid").required("Email is required"),
-      company: Yup.string().required("Password is required"),
+      stock: Yup.number()
+        .integer("Stock must be integer")
+        .positive("Non negative numbers")
+        .required("Stock is required"),
+      price: Yup.number()
+        .positive("Non negative numbers")
+        .required("Price is required"),
     }),
-    onSubmit: async ({ name, lastname, email, company, phone }) => {
+    onSubmit: async (values) => {
       try {
-        const { data } = await newClient({
-          variables: { input: { name, lastname, email, company, phone } },
+        setMessage("Creando producto...");
+        const { data } = await newProduct({
+          variables: { input: { ...values } },
         });
-        console.log("data: ", data);
-        window.scrollTo(0, 0);
-        setMessage("Cliente creado correctamente");
+        setMessage("Producto creado correctamente");
         setTimeout(() => {
           setMessage(null);
-          router.push("/");
+          router.push("/products");
         }, 3000);
       } catch (error) {
         console.log(error);
-        setMessage("Error al crear el nuevo cliente");
+        setMessage("Error al crear el nuevo producto");
         setTimeout(() => {
           setMessage(null);
         }, 3000);
@@ -90,7 +87,7 @@ const newClient = () => {
   return (
     <div>
       <Layout>
-        <h1 className="text-2xl font-light text-gray-800">Nuevo Cliente</h1>
+        <h1 className="text-2xl font-light text-gray-800">Nuevo Producto</h1>
         {message ? (
           <div className="w-full max-w-sm px-3 py-2 mx-auto my-3 text-center bg-white">
             <p>{message}</p>
@@ -127,95 +124,52 @@ const newClient = () => {
               <div className="mb-4">
                 <label
                   className="block mb-2 text-sm font-bold text-gray-700"
-                  htmlFor="lastname"
+                  htmlFor="stock"
                 >
-                  Apellido
+                  Existencia
                 </label>
                 <input
-                  type="text"
-                  id="lastname"
+                  type="number"
+                  id="stock"
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-none"
-                  value={formik.values.lastname}
+                  value={formik.values.stock}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
               </div>
-              {formik.touched.lastname && formik.errors.lastname ? (
+              {formik.touched.stock && formik.errors.stock ? (
                 <div className="p-4 my-2 text-red-700 bg-red-100 border-l-4 border-red-500">
                   <p className="font-bold">Error: </p>
-                  <p>{formik.errors.lastname}</p>
+                  <p>{formik.errors.stock}</p>
                 </div>
               ) : null}
               <div className="mb-4">
                 <label
                   className="block mb-2 text-sm font-bold text-gray-700"
-                  htmlFor="email"
+                  htmlFor="price"
                 >
-                  Email
+                  Precio
                 </label>
                 <input
-                  type="email"
-                  id="email"
+                  type="number"
+                  id="price"
                   className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-none"
-                  value={formik.values.email}
+                  value={formik.values.price}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
               </div>
-              {formik.touched.email && formik.errors.email ? (
+              {formik.touched.price && formik.errors.price ? (
                 <div className="p-4 my-2 text-red-700 bg-red-100 border-l-4 border-red-500">
                   <p className="font-bold">Error: </p>
-                  <p>{formik.errors.email}</p>
+                  <p>{formik.errors.price}</p>
                 </div>
               ) : null}
-              <div className="mb-4">
-                <label
-                  className="block mb-2 text-sm font-bold text-gray-700"
-                  htmlFor="company"
-                >
-                  Company
-                </label>
-                <input
-                  type="text"
-                  id="company"
-                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-none"
-                  value={formik.values.company}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-              </div>
-              {formik.touched.company && formik.errors.company ? (
-                <div className="p-4 my-2 text-red-700 bg-red-100 border-l-4 border-red-500">
-                  <p className="font-bold">Error: </p>
-                  <p>{formik.errors.company}</p>
-                </div>
-              ) : null}
-              <div className="mb-4">
-                <label
-                  className="block mb-2 text-sm font-bold text-gray-700"
-                  htmlFor="phone"
-                >
-                  Phone
-                </label>
-                <input
-                  type="text"
-                  id="phone"
-                  className="w-full px-3 py-2 leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-none"
-                  value={formik.values.phone}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-              </div>
-              {formik.touched.phone && formik.errors.phone ? (
-                <div className="p-4 my-2 text-red-700 bg-red-100 border-l-4 border-red-500">
-                  <p className="font-bold">Error: </p>
-                  <p>{formik.errors.phone}</p>
-                </div>
-              ) : null}
+
               <input
                 type="submit"
                 className="w-full p-2 mt-5 text-white uppercase bg-gray-800 hover:bg-gray-900"
-                value="Crear Cliente"
+                value="Crear Producto"
               />
             </form>
           </div>

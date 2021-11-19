@@ -2,50 +2,45 @@ import Swal from "sweetalert2";
 import { useMutation, gql } from "@apollo/client";
 import { useRouter } from "next/router";
 
-const DELETE_CLIENT = gql`
-  mutation DeleteClient($id: ID) {
-    deleteClient(id: $id)
+const DELETE_PRODUCT = gql`
+  mutation Mutation($id: ID) {
+    deleteProduct(id: $id)
   }
 `;
 
-const GET_CLIENTS_BY_SELLER = gql`
-  query GetClientsBySeller {
-    getClientsBySeller {
+const GET_PRODUCTS = gql`
+  query Query {
+    getProducts {
       id
       name
-      lastname
-      email
-      company
-      phone
+      stock
+      price
       createdAt
-      sellerId
     }
   }
 `;
 
-const Client = ({ client: { id, name, lastname, company, email } }) => {
+const Product = ({ product: { id, name, stock, price } }) => {
   const router = useRouter();
-  const [deleteClient] = useMutation(DELETE_CLIENT, {
+  const [deleteProduct] = useMutation(DELETE_PRODUCT, {
     update(cache) {
-      const { getClientsBySeller } = cache.readQuery({
-        query: GET_CLIENTS_BY_SELLER,
+      const { getProducts } = cache.readQuery({
+        query: GET_PRODUCTS,
       });
       cache.evict({ broadcast: false });
       cache.writeQuery({
-        query: GET_CLIENTS_BY_SELLER,
+        query: GET_PRODUCTS,
         data: {
-          getClientsBySeller: getClientsBySeller.filter(
-            (client) => client.id !== id
-          ),
+          getProducts: getProducts.filter((product) => product.id !== id),
         },
       });
     },
   });
 
-  const handleDeleteClient = () => {
+  const handleDeleteProduct = () => {
     Swal.fire({
-      title: "Eliminar Cliente",
-      text: "Estas seguro de eliminar este cliente?",
+      title: "Eliminar Producto",
+      text: "Estas seguro de eliminar este producto?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -54,8 +49,8 @@ const Client = ({ client: { id, name, lastname, company, email } }) => {
     }).then(async ({ isConfirmed }) => {
       if (isConfirmed) {
         try {
-          const { data } = await deleteClient({ variables: { id } });
-          Swal.fire("Eliminado", data.deleteClient, "success");
+          const { data } = await deleteProduct({ variables: { id } });
+          Swal.fire("Eliminado", data.deleteProduct, "success");
         } catch (error) {
           console.log(error);
         }
@@ -63,23 +58,23 @@ const Client = ({ client: { id, name, lastname, company, email } }) => {
     });
   };
 
-  const handleEditClient = () => {
+  const handleEditProduct = () => {
     router.push({
-      pathname: "/edit-client/[id]",
+      pathname: "/edit-product/[id]",
       query: { id },
     });
   };
 
   return (
     <tr>
-      <td className="px-4 py-2 border border-gray-300">{`${name} ${lastname}`}</td>
-      <td className="px-4 py-2 border border-gray-300">{company}</td>
-      <td className="px-4 py-2 border border-gray-300">{email}</td>
+      <td className="px-4 py-2 border border-gray-300">{name}</td>
+      <td className="px-4 py-2 border border-gray-300">{stock}</td>
+      <td className="px-4 py-2 border border-gray-300">$ {price}</td>
       <td className="px-4 py-2 border border-gray-300">
         <button
           type="button"
           className="flex items-center justify-center w-full px-4 py-2 font-bold text-white uppercase bg-red-800 rounded"
-          onClick={handleDeleteClient}
+          onClick={handleDeleteProduct}
         >
           Eliminar
           <svg
@@ -102,7 +97,7 @@ const Client = ({ client: { id, name, lastname, company, email } }) => {
         <button
           type="button"
           className="flex items-center justify-center w-full px-4 py-2 font-bold text-white uppercase bg-green-600 rounded"
-          onClick={handleEditClient}
+          onClick={handleEditProduct}
         >
           Editar
           <svg
@@ -125,4 +120,4 @@ const Client = ({ client: { id, name, lastname, company, email } }) => {
   );
 };
 
-export default Client;
+export default Product;
