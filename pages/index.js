@@ -1,7 +1,9 @@
-import Layout from "../components/Layout";
 import { useQuery, gql } from "@apollo/client";
 import Link from "next/link";
 import router from "next/router";
+
+import Layout from "../components/Layout";
+import Client from "../components/Client";
 
 const GET_CLIENTS_BY_SELLER = gql`
   query GetClientsBySeller {
@@ -51,24 +53,13 @@ const Home = () => {
               <th className="w-1/5 py-2">Nombre</th>
               <th className="w-1/5 py-2">Empresa</th>
               <th className="w-1/5 py-2">Email</th>
+              <th className="w-1/5 py-2">Eliminar</th>
             </tr>
           </thead>
           <tbody>
-            {data?.getClientsBySeller.map(
-              ({ name, lastname, id, email, company }) => {
-                return (
-                  <tr key={id}>
-                    <td className="px-4 py-2 border border-gray-300">{`${name} ${lastname}`}</td>
-                    <td className="px-4 py-2 border border-gray-300">
-                      {company}
-                    </td>
-                    <td className="px-4 py-2 border border-gray-300">
-                      {email}
-                    </td>
-                  </tr>
-                );
-              }
-            )}
+            {data?.getClientsBySeller.map((client) => {
+              return <Client key={client.id} client={client} />;
+            })}
           </tbody>
         </table>
       </Layout>
