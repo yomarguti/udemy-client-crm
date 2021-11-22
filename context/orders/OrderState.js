@@ -15,8 +15,18 @@ const OrderState = ({ children }) => {
     dispatch({ type: ActionTypes.SELECT_CLIENT, payload: client });
   };
 
+  const addProducts = (products) => {
+    dispatch({ type: ActionTypes.SELECT_PRODUCT, payload: products });
+  };
+
+  const updateQuantity = (product) => {
+    dispatch({ type: ActionTypes.PRODUCT_QUANTITY, payload: product });
+  };
+
   return (
-    <OrderContext.Provider value={{ state, addClient }}>
+    <OrderContext.Provider
+      value={{ state, addClient, addProducts, updateQuantity }}
+    >
       {children}
     </OrderContext.Provider>
   );

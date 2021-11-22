@@ -7,6 +7,19 @@ const reducer = (state, action) => {
         ...state,
         client: action.payload,
       };
+    case ActionTypes.SELECT_PRODUCT:
+      return {
+        ...state,
+        products: [...action.payload],
+      };
+    case ActionTypes.PRODUCT_QUANTITY:
+      const filterProducts = state.products.filter(
+        (product) => product.id !== action.payload.id
+      );
+      return {
+        ...state,
+        products: [...filterProducts, action.payload],
+      };
 
     default:
       return state;
