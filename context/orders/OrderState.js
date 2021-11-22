@@ -19,8 +19,8 @@ const OrderState = ({ children }) => {
     dispatch({ type: ActionTypes.SELECT_PRODUCT, payload: products });
   };
 
-  const updateQuantity = (product) => {
-    dispatch({ type: ActionTypes.PRODUCT_QUANTITY, payload: product });
+  const updateQuantity = (value, id) => {
+    dispatch({ type: ActionTypes.PRODUCT_QUANTITY, payload: { value, id } });
   };
 
   return (

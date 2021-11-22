@@ -11,7 +11,8 @@ const TotalOrder = () => {
 
   if (products.length > 0) {
     total = products.reduce((acc, current) => {
-      return acc + current.quantity * current.price;
+      const quantity = current.quantity || 0;
+      return acc + quantity * current.price;
     }, 0);
   }
 
