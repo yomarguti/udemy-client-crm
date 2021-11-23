@@ -70,7 +70,6 @@ const newClient = () => {
         const { data } = await newClient({
           variables: { input: { name, lastname, email, company, phone } },
         });
-        console.log("data: ", data);
         window.scrollTo(0, 0);
         setMessage("Cliente creado correctamente");
         setTimeout(() => {

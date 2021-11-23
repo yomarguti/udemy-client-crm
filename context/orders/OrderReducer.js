@@ -24,8 +24,13 @@ const reducer = (state, action) => {
         };
       });
 
+      const total = updatedProducts.reduce((acc, current) => {
+        return acc + current.quantity * current.price;
+      }, 0);
+
       return {
         ...state,
+        total,
         products: [...updatedProducts],
       };
     case ActionTypes.PRODUCT_QUANTITY:
@@ -40,8 +45,13 @@ const reducer = (state, action) => {
         return updatedProduct;
       });
 
+      const newTotal = products.reduce((acc, current) => {
+        return acc + current.quantity * current.price;
+      }, 0);
+
       return {
         ...state,
+        total: newTotal,
         products,
       };
 

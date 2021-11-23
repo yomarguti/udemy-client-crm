@@ -57,7 +57,6 @@ const EditClient = () => {
       const { data } = await updateClient({
         variables: { id: id, input: { name, lastname, company, email, phone } },
       });
-      console.log("data: ", data);
       window.scrollTo(0, 0);
       setMessage("Cliente actualizado correctamente");
       setTimeout(() => {

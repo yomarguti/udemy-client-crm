@@ -49,12 +49,10 @@ const EditProduct = () => {
   const [message, setMessage] = useState(null);
 
   const handleSubmit = async ({ name, stock, price }) => {
-    console.log(id);
     try {
       const { data } = await updateProduct({
         variables: { id: id, input: { name, stock, price } },
       });
-      console.log("data: ", data);
       setMessage("Producto actualizado correctamente");
       setTimeout(() => {
         setMessage(null);

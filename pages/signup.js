@@ -39,7 +39,6 @@ const SignUp = () => {
     }),
     onSubmit: async (values) => {
       try {
-        console.log(values);
         const { data } = await createAccount({
           variables: { input: { ...values } },
         });

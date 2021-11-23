@@ -30,8 +30,6 @@ const AddProducts = () => {
     return <p>Loading...</p>;
   }
 
-  console.log(state);
-
   return (
     <>
       <p className="p-2 my-2 mt-10 text-sm font-bold text-gray-700 bg-white border-l-4 border-gray-800">
