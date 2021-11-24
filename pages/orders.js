@@ -3,6 +3,7 @@ import Link from "next/link";
 import router from "next/router";
 
 import Layout from "../components/Layout";
+import Order from "../components/Order";
 
 const GET_ORDERS_BY_SELLER = gql`
   query GetOrdersBySeller {
@@ -11,9 +12,18 @@ const GET_ORDERS_BY_SELLER = gql`
       products {
         id
         quantity
+        name
+        price
       }
       total
-      client
+      client {
+        id
+        name
+        lastname
+        company
+        email
+        phone
+      }
       seller
       createdAt
       status
@@ -39,6 +49,8 @@ const Orders = () => {
     return <p>No data</p>;
   }
 
+  const { getOrdersBySeller } = data;
+
   return (
     <div>
       <Layout>
@@ -48,18 +60,15 @@ const Orders = () => {
             Nuevo Pedido
           </a>
         </Link>
-        <table className="w-full mt-10 shadow-md table-auto w-lg">
-          <thead className="bg-gray-800">
-            <tr className="text-white">
-              <th className="w-1/5 py-2">Nombre</th>
-              <th className="w-1/5 py-2">Existencia</th>
-              <th className="w-1/5 py-2">Precio</th>
-              <th className="w-1/5 py-2">Eliminar</th>
-              <th className="w-1/5 py-2">Editar</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+        {getOrdersBySeller.length === 0 ? (
+          <p className="mt-5 text-2xl text-center">
+            Noy hay pedidos que mostrar
+          </p>
+        ) : (
+          getOrdersBySeller.map((order) => (
+            <Order key={order.id} order={order} />
+          ))
+        )}
       </Layout>
     </div>
   );

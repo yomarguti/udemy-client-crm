@@ -17,8 +17,46 @@ const NEW_ORDER = gql`
     }
   }
 `;
+
+const GET_ORDERS_BY_SELLER = gql`
+  query GetOrdersBySeller {
+    getOrdersBySeller {
+      id
+      products {
+        id
+        quantity
+        name
+        price
+      }
+      total
+      client {
+        id
+        name
+        lastname
+        company
+        email
+        phone
+      }
+      seller
+      createdAt
+      status
+    }
+  }
+`;
 const newOrder = () => {
-  const [newOrder] = useMutation(NEW_ORDER);
+  const [newOrder] = useMutation(NEW_ORDER, {
+    update(cache, { data: { newOrder } }) {
+      const { getOrdersBySeller } = cache.readQuery({
+        query: GET_ORDERS_BY_SELLER,
+      });
+      cache.writeQuery({
+        query: GET_ORDERS_BY_SELLER,
+        data: {
+          getOrdersBySeller: [...getOrdersBySeller, newOrder],
+        },
+      });
+    },
+  });
   const [message, setMessage] = useState(null);
   const router = useRouter();
 
